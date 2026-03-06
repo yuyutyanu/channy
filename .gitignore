@@ -1,0 +1,38 @@
+# 依存
+node_modules/
+
+# 環境変数（API キーなど）
+.env
+.env.local
+.env.*.local
+
+# TypeScript ビルド成果物
+dist/
+build/
+*.js.map
+
+# ランタイムキャッシュ
+*.tsbuildinfo
+
+# エディタ
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ログ
+*.log
+npm-debug.log*
+
+# 会話ログ（個人情報を含む可能性があるためコミットしない）
+# data/memory.md はコミット可（永続メモ）
+data/history.jsonl
+
+# ローカル設定（個人設定はコミットしない）
+.claude/settings.local.json
