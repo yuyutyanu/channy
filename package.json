@@ -7,7 +7,10 @@
     },
     "scripts": {
         "start": "tsx --env-file=.env src/index.ts",
-        "dev": "tsx watch --env-file=.env src/index.ts"
+        "dev": "tsx watch --env-file=.env src/index.ts",
+        "format": "biome format --write src skills",
+        "lint": "biome check src skills",
+        "lint:fix": "biome check --write src skills"
     },
     "dependencies": {
         "@mastra/core": "^0.10.0",
@@ -16,6 +19,7 @@
         "zod": "^3.23.0"
     },
     "devDependencies": {
+        "@biomejs/biome": "^2.4.6",
         "@types/node": "^22.0.0",
         "tsx": "^4.19.0",
         "typescript": "^5.7.0"

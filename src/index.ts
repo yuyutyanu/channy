@@ -8,7 +8,9 @@ function startSpinner(label = "考え中"): NodeJS.Timeout {
     let i = 0;
     process.stdout.write(`${SPINNER_FRAMES[0]} ${label}...`);
     return setInterval(() => {
-        process.stdout.write(`\r${SPINNER_FRAMES[i++ % SPINNER_FRAMES.length]} ${label}...`);
+        process.stdout.write(
+            `\r${SPINNER_FRAMES[i++ % SPINNER_FRAMES.length]} ${label}...`,
+        );
     }, 80);
 }
 
@@ -53,7 +55,7 @@ async function main() {
 
             try {
                 const spinner = startSpinner();
-                const result = await agent.generate(messages);
+                const result = await agent.generate(messages, { maxSteps: 10 });
                 stopSpinner(spinner);
                 const text = result.text ?? "(応答なし)";
                 console.log(`\nAgent: ${text}\n`);

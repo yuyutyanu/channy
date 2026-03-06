@@ -53,7 +53,7 @@ export class SkillLoader {
             if (!result.success) {
                 console.warn(
                     `⚠️ Invalid SKILL.md in ${dirName}:`,
-                    result.error.flatten().fieldErrors
+                    result.error.flatten().fieldErrors,
                 );
                 return null;
             }
@@ -74,7 +74,10 @@ export class SkillLoader {
     }
 
     // 環境変数とバイナリの存在を検証（DESIGN-1: bins を実装）
-    private checkRequirements(skill: Skill): { ok: boolean; missing: string[] } {
+    private checkRequirements(skill: Skill): {
+        ok: boolean;
+        missing: string[];
+    } {
         const missing: string[] = [];
 
         for (const envKey of skill.meta.requires?.env ?? []) {
@@ -91,7 +94,8 @@ export class SkillLoader {
     // バイナリの存在確認（Windows: where / その他: which）
     private binExists(bin: string): boolean {
         try {
-            const cmd = process.platform === "win32" ? `where ${bin}` : `which ${bin}`;
+            const cmd =
+                process.platform === "win32" ? `where ${bin}` : `which ${bin}`;
             execSync(cmd, { stdio: "ignore" });
             return true;
         } catch {
@@ -124,16 +128,32 @@ export class SkillLoader {
         const tools: Record<string, any> = {};
 
         for (const skill of this.loadSkills()) {
-            const toolPath = path.resolve(this.skillsDir, skill.dirName, "tool.ts");
+            const toolPath = path.resolve(
+                this.skillsDir,
+                skill.dirName,
+                "tool.ts",
+            );
             if (fs.existsSync(toolPath)) {
                 try {
                     const mod = await import(pathToFileURL(toolPath).href);
-                    if (mod.toolName && mod.tool) {
+                    if (
+                        Array.isArray(mod.toolNames) &&
+                        Array.isArray(mod.tools)
+                    ) {
+                        // 複数ツールエクスポート形式
+                        for (let i = 0; i < mod.toolNames.length; i++) {
+                            tools[mod.toolNames[i] as string] = mod.tools[i];
+                            console.log(`✅ Loaded tool: ${mod.toolNames[i]}`);
+                        }
+                    } else if (mod.toolName && mod.tool) {
                         tools[mod.toolName as string] = mod.tool;
                         console.log(`✅ Loaded tool: ${mod.toolName}`);
                     }
                 } catch (e) {
-                    console.warn(`⚠️ Failed to load tool from ${skill.dirName}:`, e);
+                    console.warn(
+                        `⚠️ Failed to load tool from ${skill.dirName}:`,
+                        e,
+                    );
                 }
             }
         }
